@@ -33,60 +33,79 @@ STEP-8: Repeat the above steps to generate the entire cipher text.
 ```
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
-// Function to perform Vigenere encryption
+// Function to remove trailing newline from fgets
+void removeNewline(char str[]) {
+    size_t len = strlen(str);
+    if (len > 0 && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+    }
+}
+
+// Vigenere Encryption
 void vigenereEncrypt(char text[], char key[]) {
     int textLen = strlen(text);
     int keyLen = strlen(key);
+    int keyIndex = 0;
 
     for (int i = 0; i < textLen; i++) {
         char c = text[i];
-        if (c >= 'A' && c <= 'Z') {
-            // Encrypt uppercase letters
-            text[i] = ((c - 'A' + (key[i % keyLen] - 'A')) % 26) + 'A';
-        } else if (c >= 'a' && c <= 'z') {
-            // Encrypt lowercase letters
-            text[i] = ((c - 'a' + (key[i % keyLen] - 'A')) % 26) + 'a';
+        if (isalpha(c)) {
+            char k = toupper(key[keyIndex % keyLen]) - 'A';
+            if (isupper(c)) {
+                text[i] = ((c - 'A' + k) % 26) + 'A';
+            } else {
+                text[i] = ((c - 'a' + k) % 26) + 'a';
+            }
+            keyIndex++;
         }
     }
 }
 
-// Function to perform Vigenere decryption
+// Vigenere Decryption
 void vigenereDecrypt(char text[], char key[]) {
     int textLen = strlen(text);
     int keyLen = strlen(key);
+    int keyIndex = 0;
 
     for (int i = 0; i < textLen; i++) {
         char c = text[i];
-        if (c >= 'A' && c <= 'Z') {
-            // Decrypt uppercase letters
-            text[i] = ((c - 'A' - (key[i % keyLen] - 'A') + 26) % 26) + 'A';
-        } else if (c >= 'a' && c <= 'z') {
-            // Decrypt lowercase letters
-            text[i] = ((c - 'a' - (key[i % keyLen] - 'A') + 26) % 26) + 'a';
+        if (isalpha(c)) {
+            char k = toupper(key[keyIndex % keyLen]) - 'A';
+            if (isupper(c)) {
+                text[i] = ((c - 'A' - k + 26) % 26) + 'A';
+            } else {
+                text[i] = ((c - 'a' - k + 26) % 26) + 'a';
+            }
+            keyIndex++;
         }
     }
 }
 
 int main() {
-    char key[100];  // Replace with your desired key
-    fgets(key,sizeof(key),stdin);
-    char message[200] ;  // Replace with your message
-    fgets(message,sizeof(message),stdin);
-    // Encrypt the message
+    char key[50];
+    char message[200];
+
+    fgets(key, sizeof(key), stdin);
+    removeNewline(key);
+
+    fgets(message, sizeof(message), stdin);
+    removeNewline(message);
+
     vigenereEncrypt(message, key);
     printf("Encrypted Message: %s\n", message);
 
-    // Decrypt the message back to the original
     vigenereDecrypt(message, key);
     printf("Decrypted Message: %s\n", message);
 
     return 0;
 }
 
+
 ```
 ## OUTPUT
-![Screenshot_2025-10-21-21-28-48-003](https://github.com/user-attachments/assets/44f2194f-bfdc-481b-88cd-6d61f40e4c1c)
+![Screenshot_2025-10-21-22-05-35-690](https://github.com/user-attachments/assets/1e69013d-d5c0-46e8-9cdf-49a5fde545c5)
 
 ## RESULT
 Thus the vigner cipher is executed succesfully.
